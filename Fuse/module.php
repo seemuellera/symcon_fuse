@@ -158,13 +158,13 @@ class Fuse extends IPSModule {
 		switch ($this->ReadPropertyString("CompareMode") ) {
 			
 			case "IsFalse":
-				if (! GetValue($this->ReadProperyInteger("SourceVariable")) ) {
+				if (! GetValue($this->ReadPropertyInteger("SourceVariable")) ) {
 					
 					$this->Trigger();
 				}
 				break;
 			case "IsTrue":
-				if (GetValue($this->ReadProperyInteger("SourceVariable")) ) {
+				if (GetValue($this->ReadPropertyInteger("SourceVariable")) ) {
 					
 					$this->Trigger();
 				}
