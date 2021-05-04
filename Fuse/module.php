@@ -155,22 +155,22 @@ class Fuse extends IPSModule {
 	
 	protected function CheckSourceVariable() {
 		
-		switch ($this->RegisterPropertyString("CompareMode") ) {
+		switch ($this->ReadPropertyString("CompareMode") ) {
 			
 			case "IsFalse":
-				if (! ReadValue($this->RegisterProperyInteger("SourceVariable")) ) {
+				if (! ReadValue($this->ReadProperyInteger("SourceVariable")) ) {
 					
 					$this->Trigger();
 				}
 				break;
 			case "IsTrue":
-				if (ReadValue($this->RegisterProperyInteger("SourceVariable")) ) {
+				if (ReadValue($this->ReadProperyInteger("SourceVariable")) ) {
 					
 					$this->Trigger();
 				}
 				break;
 			default:
-				$this->LogMessage("An undefined compare mode was used","CRIT");
+				$this->LogMessage("An undefined compare mode was used: " . $this->ReadPropertyString("CompareMode"),"CRIT");
 		}
 	}
 }
