@@ -139,7 +139,7 @@ class Fuse extends IPSModule {
 	
 	public function Trigger() {
 		
-		if (ReadValue($this->GetIDForIdent("Status")) ) {
+		if (GetValue($this->GetIDForIdent("Status")) ) {
 		
 			SetValue($this->GetIDForIdent("Status"), false);
 		}
@@ -147,7 +147,7 @@ class Fuse extends IPSModule {
 	
 	public function Reset() {
 		
-		if (! ReadValue($this->GetIDForIdent("Status")) ) {
+		if (! GetValue($this->GetIDForIdent("Status")) ) {
 		
 			SetValue($this->GetIDForIdent("Status"), true);
 		}
@@ -158,13 +158,13 @@ class Fuse extends IPSModule {
 		switch ($this->ReadPropertyString("CompareMode") ) {
 			
 			case "IsFalse":
-				if (! ReadValue($this->ReadProperyInteger("SourceVariable")) ) {
+				if (! GetValue($this->ReadProperyInteger("SourceVariable")) ) {
 					
 					$this->Trigger();
 				}
 				break;
 			case "IsTrue":
-				if (ReadValue($this->ReadProperyInteger("SourceVariable")) ) {
+				if (GetValue($this->ReadProperyInteger("SourceVariable")) ) {
 					
 					$this->Trigger();
 				}
