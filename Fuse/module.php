@@ -22,7 +22,7 @@ class Fuse extends IPSModule {
 		$this->RegisterPropertyString("Sender","Fuse");
 		$this->RegisterPropertyBoolean("DebugOutput",false);
 		$this->RegisterPropertyInteger("RefreshInterval",0);
-		$this->RegisterProperyInteger("SourceVariable",0);
+		$this->RegisterPropertyInteger("SourceVariable",0);
 		$this->RegisterPropertyString("CompareMode","IsTrue");
 		
 		// Variables
