@@ -1,0 +1,14 @@
+{
+  "id": "{3BD59158-164F-4B44-B25D-BCC059EBB352}",
+  "name": "Fuse",
+  "type": 3,
+  "vendor": "Andreas",
+  "aliases": 
+  [
+	  "Fuse"
+  ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "FUSE"
+}
