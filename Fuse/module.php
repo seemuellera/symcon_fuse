@@ -142,6 +142,7 @@ class Fuse extends IPSModule {
 		if (GetValue($this->GetIDForIdent("Status")) ) {
 		
 			SetValue($this->GetIDForIdent("Status"), false);
+			$this->LogMessage("Fuse was triggered","DEBUG");
 		}
 	}
 	
@@ -150,6 +151,7 @@ class Fuse extends IPSModule {
 		if (! GetValue($this->GetIDForIdent("Status")) ) {
 		
 			SetValue($this->GetIDForIdent("Status"), true);
+			$this->LogMessage("Fuse was triggered","DEBUG");
 		}
 	}
 	
