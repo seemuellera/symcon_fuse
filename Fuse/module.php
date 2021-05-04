@@ -21,6 +21,9 @@ class Fuse extends IPSModule {
 		// Properties
 		$this->RegisterPropertyString("Sender","Fuse");
 		$this->RegisterPropertyBoolean("DebugOutput",false);
+		$this->RegisterPropertyInteger("RefreshInterval",0);
+		$this->RegisterProperyInteger("SourceVariable",0);
+		$this->RegisterPropertyString("CompareMode","IsTrue");
 		
 		// Variables
 		$this->RegisterVariableBoolean("Status","Status","~Switch");
@@ -28,6 +31,8 @@ class Fuse extends IPSModule {
 		//Actions
 		$this->EnableAction("Status");
 
+		// Timer
+		$this->RegisterTimer("RefreshInformation", 0 , 'Fuse_RefreshInformation($_IPS[\'TARGET\']);');
     }
 
 	public function Destroy() {
@@ -36,14 +41,6 @@ class Fuse extends IPSModule {
 		parent::Destroy();
 	}
  
-	// Überschreibt die intere IPS_ApplyChanges($id) Funktion
-	public function ApplyChanges() {
-		
-		// Diese Zeile nicht löschen
-		parent::ApplyChanges();
-	}
-
-
 	public function GetConfigurationForm() {
         	
 		// Initialize the form
@@ -54,14 +51,44 @@ class Fuse extends IPSModule {
 
 		// Add the Elements
 		$form['elements'][] = Array("type" => "CheckBox", "name" => "DebugOutput", "caption" => "Enable Debug Output");
+		$form['elements'][] = Array("type" => "SelectVariable", "name" => "SourceVariable", "caption" => "Source Variable");
+		
+		$form['elements'][] = Array(
+								"type" => "Select", 
+								"name" => "CompareMode", 
+								"caption" => "Select Comparison Mode",
+								"options" => Array(
+									Array(
+										"caption" => "IsTrue (Boolean) - Fuse triggers when source variable is true",
+										"value" => "IsTrue"
+									),
+									Array(
+										"caption" => "IsFalse (Boolean) - Fuse triggers when source variable is false",
+										"value" => "IsFalse"
+									)
+								)
+							);
 		
 		// Add the buttons for the test center
+		$form['actions'][] = Array(	"type" => "Button", "label" => "Refresh", "onClick" => 'FUSE_RefreshInformation($id);');
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Trigger", "onClick" => 'FUSE_Trigger($id);');
 		$form['actions'][] = Array(	"type" => "Button", "label" => "Reset", "onClick" => 'FUSE_Reset($id);');
 		
 		// Return the completed form
 		return json_encode($form);
 
+	}
+	
+	// Überschreibt die intere IPS_ApplyChanges($id) Funktion
+	public function ApplyChanges() {
+		
+		$newInterval = $this->ReadPropertyInteger("RefreshInterval") * 1000;
+		$this->SetTimerInterval("RefreshInformation", $newInterval);
+		
+		$this->RegisterMessage($this->ReadPropertyInteger("SourceVariable"), VM_UPDATE);
+		
+		// Diese Zeile nicht löschen
+		parent::ApplyChanges();
 	}
 	
 	// Version 1.0
@@ -93,17 +120,57 @@ class Fuse extends IPSModule {
 				SetValue($this->GetIDForIdent($Ident), $Value);
 				break;
 			default:
-				throw new Exception("Invalid Ident");
+				$this->LogMessage("An undefined compare mode was used","CRIT");
 		}
+	}
+	
+	public function RefreshInformation() {
+
+		$this->LogMessage("Refresh in Progress", "DEBUG");
+		$this->CheckSourceVariable();
+	}
+	
+	public function MessageSink($TimeStamp, $SenderId, $Message, $Data) {
+	
+		$this->LogMessage("$TimeStamp - $SenderId - $Message - " . implode(" ; ",$Data), "DEBUG");
+		
+		$this->CheckSourceVariable();
 	}
 	
 	public function Trigger() {
 		
-		SetValue($this->GetIDForIdent("Status"), false);
+		if (ReadValue($this->GetIDForIdent("Status")) ) {
+		
+			SetValue($this->GetIDForIdent("Status"), false);
+		}
 	}
 	
 	public function Reset() {
 		
-		SetValue($this->GetIDForIdent("Status"), true);
+		if (! ReadValue($this->GetIDForIdent("Status")) ) {
+		
+			SetValue($this->GetIDForIdent("Status"), true);
+		}
+	}
+	
+	protected function CheckSourceVariable() {
+		
+		switch ($this->RegisterPropertyString("CompareMode") ) {
+			
+			case "IsFalse":
+				if (! ReadValue($this->RegisterProperyInteger("SourceVariable")) ) {
+					
+					$this->Trigger();
+				}
+				break;
+			case "IsTrue":
+				if (ReadValue($this->RegisterProperyInteger("SourceVariable")) ) {
+					
+					$this->Trigger();
+				}
+				break;
+			default:
+				$this->LogMessage("An undefined compare mode was used","CRIT");
+		}
 	}
 }
