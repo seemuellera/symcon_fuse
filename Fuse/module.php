@@ -100,6 +100,7 @@ class Fuse extends IPSModule {
 		}
 		
 		$this->RegisterMessage($this->ReadPropertyInteger("SourceVariable"), VM_UPDATE);
+		$this->RegisterReference($this->ReadPropertyInteger("SourceVariable"));
 		
 		// Diese Zeile nicht löschen
 		parent::ApplyChanges();
