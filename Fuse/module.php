@@ -89,14 +89,14 @@ class Fuse extends IPSModule {
 		$referenceList = $this->GetReferenceList();
 		foreach ($referenceList as $currentReference) {
 
-			$this->UnregisterReference($this->InstanceID, $currentReference);
+			$this->UnregisterReference($currentReference);
 		}
 
 		// Clean old message registration
 		$messagesList = $this->GetMessageList();
 		foreach ($messagesList as $currentMessage) {
 
-			$this->UnregisterMessage($this->InstanceID, $currentMessage);
+			$this->UnregisterMessage($currentMessage, VM_CHANGE);
 		}
 		
 		$this->RegisterMessage($this->ReadPropertyInteger("SourceVariable"), VM_UPDATE);
